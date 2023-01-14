@@ -3,7 +3,6 @@ package com.zhangteng.svgalibrary.animation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.http.HttpResponseCache
-import com.opensource.svgaplayer.SVGADrawable
 import com.opensource.svgaplayer.SVGAImageView
 import com.opensource.svgaplayer.SVGAParser
 import com.opensource.svgaplayer.SVGAParser.Companion.shareParser
@@ -63,7 +62,6 @@ object AnimationPlayer {
         svgaParser?.decodeFromAssets(animationName!!, object : SVGAParser.ParseCompletion {
             override fun onComplete(videoItem: SVGAVideoEntity) {
                 parseListener?.onComplete(videoItem)
-                parseListener?.onComplete(SVGADrawable(videoItem))
             }
 
             override fun onError() {
@@ -83,7 +81,6 @@ object AnimationPlayer {
             svgaParser?.decodeFromURL(URL(animationPath), object : SVGAParser.ParseCompletion {
                 override fun onComplete(videoItem: SVGAVideoEntity) {
                     parseListener?.onComplete(videoItem)
-                    parseListener?.onComplete(SVGADrawable(videoItem))
                 }
 
                 override fun onError() {
@@ -92,6 +89,40 @@ object AnimationPlayer {
             }, null)
         } catch (e: MalformedURLException) {
             parseListener!!.onError()
+        }
+    }
+
+    /**
+     * description 加载本地动画
+     *
+     * @param animationPath 资源路径
+     * @param parseListener 解析回调
+     */
+    fun decodeFromPath(
+        animationPath: String?,
+        parseListener: ParseListener?
+    ) {
+        try {
+            val fileInputStream = FileInputStream(animationPath)
+            val cacheKey = md5Decode32(animationPath!!)
+            svgaParser?.decodeFromInputStream(
+                fileInputStream,
+                cacheKey,
+                object : SVGAParser.ParseCompletion {
+                    override fun onComplete(videoItem: SVGAVideoEntity) {
+                        parseListener?.onComplete(videoItem)
+                    }
+
+                    override fun onError() {
+                        parseListener?.onError()
+                    }
+                },
+                true,
+                null,
+                animationPath
+            )
+        } catch (e: FileNotFoundException) {
+            parseListener?.onError()
         }
     }
 
@@ -109,9 +140,8 @@ object AnimationPlayer {
     ) {
         svgaParser?.decodeFromAssets(animationName!!, object : SVGAParser.ParseCompletion {
             override fun onComplete(videoItem: SVGAVideoEntity) {
-                animationView.setVideoItem(videoItem)
                 parseListener?.onComplete(videoItem)
-                parseListener?.onComplete(animationView.drawable as SVGADrawable)
+                animationView.setVideoItem(videoItem)
                 animationView.stepToFrame(0, true)
             }
 
@@ -136,9 +166,8 @@ object AnimationPlayer {
         try {
             svgaParser?.decodeFromURL(URL(animationPath), object : SVGAParser.ParseCompletion {
                 override fun onComplete(videoItem: SVGAVideoEntity) {
-                    animationView!!.setVideoItem(videoItem)
                     parseListener?.onComplete(videoItem)
-                    parseListener?.onComplete(animationView.drawable as SVGADrawable)
+                    animationView!!.setVideoItem(videoItem)
                     animationView.stepToFrame(0, true)
                 }
 
@@ -171,9 +200,8 @@ object AnimationPlayer {
                 cacheKey,
                 object : SVGAParser.ParseCompletion {
                     override fun onComplete(videoItem: SVGAVideoEntity) {
-                        animationView!!.setVideoItem(videoItem)
                         parseListener?.onComplete(videoItem)
-                        parseListener?.onComplete(animationView.drawable as SVGADrawable)
+                        animationView!!.setVideoItem(videoItem)
                         animationView.stepToFrame(0, true)
                     }
 

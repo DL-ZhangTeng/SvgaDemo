@@ -3,7 +3,6 @@ package com.zhangteng.svgalibrary
 import android.content.Context
 import android.widget.RelativeLayout
 import com.blankj.utilcode.util.ScreenUtils
-import com.opensource.svgaplayer.SVGADrawable
 import com.opensource.svgaplayer.SVGAImageView
 import com.opensource.svgaplayer.SVGAVideoEntity
 import com.zhangteng.httputils.http.HttpUtils
@@ -257,6 +256,7 @@ object SVGAPlayerManager {
      * @param url           资源
      * @param centerX       中心点坐标
      * @param centerY       中心点坐标
+     * @param isLayout      是否根据配置文件重设View大小位置，可能造成动效中的音频无法关闭的bug，原因未知
      * @param parseListener 解析回调
      */
     @JvmOverloads
@@ -265,6 +265,7 @@ object SVGAPlayerManager {
         url: String?,
         centerX: Float = 0.5f,
         centerY: Float = 0.5f,
+        isLayout: Boolean = true,
         parseListener: ParseListener? = null
     ) {
         AnimationPlayer
@@ -273,17 +274,15 @@ object SVGAPlayerManager {
                 url,
                 object : ParseListener {
                     override fun onComplete(videoEntity: SVGAVideoEntity?) {
-                        val configEntity = ConfigEntity()
-                        configEntity.animationWidth = 1.0f
-                        configEntity.animationHeight = 1.0f
-                        configEntity.centerX = centerX
-                        configEntity.centerY = centerY
-                        layoutAnimationView(animationView, configEntity, videoEntity, 1)
+                        if (isLayout) {
+                            val configEntity = ConfigEntity()
+                            configEntity.animationWidth = 1.0f
+                            configEntity.animationHeight = 1.0f
+                            configEntity.centerX = centerX
+                            configEntity.centerY = centerY
+                            layoutAnimationView(animationView, configEntity, videoEntity, 1)
+                        }
                         parseListener?.onComplete(videoEntity)
-                    }
-
-                    override fun onComplete(drawable: SVGADrawable?) {
-                        parseListener?.onComplete(drawable)
                     }
 
                     override fun onError() {
@@ -301,7 +300,7 @@ object SVGAPlayerManager {
      *
      * @param animationView 动画view
      * @param entity        资源
-     * @param isLayout      是否根据配置文件重设View大小位置
+     * @param isLayout      是否根据配置文件重设View大小位置，可能造成动效中的音频无法关闭的bug，原因未知
      * @param parseListener 解析回调
      */
     @JvmOverloads
@@ -351,10 +350,6 @@ object SVGAPlayerManager {
                                                     )
                                                 }
                                                 parseListener?.onComplete(videoEntity)
-                                            }
-
-                                            override fun onComplete(drawable: SVGADrawable?) {
-                                                parseListener?.onComplete(drawable)
                                             }
 
                                             override fun onError() {

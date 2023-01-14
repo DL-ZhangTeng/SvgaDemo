@@ -80,7 +80,7 @@ class AnimationPlayerActivity : BaseActivity() {
         if (animationEntity != null && !TextUtils.isEmpty(animationEntity!!.animationUrl)) {
             SVGAPlayerManager.loadAnimation(svgaImageView, animationEntity!!)
         } else if (!TextUtils.isEmpty(animationUrl)) {
-            SVGAPlayerManager.loadAnimation(svgaImageView, animationUrl, centerX, centerY, null)
+            SVGAPlayerManager.loadAnimation(svgaImageView, animationUrl, centerX, centerY)
         } else {
             finish()
         }
