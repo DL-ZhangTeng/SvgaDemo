@@ -420,8 +420,14 @@ object SVGAPlayerManager {
         scaleType: Int
     ) {
         animationView?.post {
-            val layoutParams =
-                animationView.layoutParams as RelativeLayout.LayoutParams
+            var layoutParams =
+                animationView.layoutParams as RelativeLayout.LayoutParams?
+            if (layoutParams == null) {
+                layoutParams = RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT
+                )
+            }
             val screenWidth = ScreenUtils.getScreenWidth()
             val screenHeight = ScreenUtils.getScreenHeight()
             var viewWidth = (screenWidth * configEntity.animationWidth).toInt()
@@ -456,7 +462,7 @@ object SVGAPlayerManager {
                 (screenWidth * configEntity.centerX - viewWidth * configEntity.animationWidth / 2).toInt()
             layoutParams.topMargin =
                 (screenHeight * configEntity.centerY - viewHeight * configEntity.animationHeight / 2).toInt()
-            animationView.parent.requestLayout()
+            animationView.parent?.requestLayout()
         }
     }
 
