@@ -280,7 +280,7 @@ object SVGAPlayerManager {
                             configEntity.animationHeight = 1.0f
                             configEntity.centerX = centerX
                             configEntity.centerY = centerY
-                            layoutAnimationView(animationView, configEntity, videoEntity, 1)
+                            layoutAnimationView(animationView, configEntity, videoEntity, 0)
                         }
                         parseListener?.onComplete(videoEntity)
                     }
@@ -346,7 +346,7 @@ object SVGAPlayerManager {
                                                         animationView,
                                                         configEntity,
                                                         videoEntity,
-                                                        1
+                                                        0
                                                     )
                                                 }
                                                 parseListener?.onComplete(videoEntity)
@@ -411,7 +411,7 @@ object SVGAPlayerManager {
      * @param animationView 动画view
      * @param configEntity  配置
      * @param videoEntity   动效尺寸信息
-     * @param scaleType     缩放方式：0 压缩动效使能够全部展示（会出现边界） 1 拉伸动效使能够全部展示（会超出屏幕）
+     * @param scaleType     缩放方式：-1 不进行缩放 0 压缩动效使能够全部展示（会出现边界） 1 拉伸动效使能够全部展示（会超出屏幕）
      */
     fun layoutAnimationView(
         animationView: SVGAImageView?,
@@ -446,7 +446,7 @@ object SVGAPlayerManager {
                     } else {
                         viewWidth = width * viewHeight / height
                     }
-                } else {
+                } else if (scaleType == 1) {
                     //全屏适配，如果动效高度较大，则拉大View高度使View宽度保持全屏
                     //全屏适配，如果动效宽度较大，则拉大View宽度使View高度保持全屏
                     if (b) {
